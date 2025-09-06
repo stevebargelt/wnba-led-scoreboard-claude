@@ -29,6 +29,9 @@ class IdleLayout:
         if color is None:
             color = Color.WHITE
         
+        # Debug: log what color we're trying to use
+        logger.debug(f"Drawing '{text}' with color {color}")
+        
         text_width = len(text) * 4  # Rough estimate
         x_start = max(0, (self.cols - text_width) // 2)
         

@@ -102,12 +102,16 @@ class MatrixRenderer:
     def draw_text(self, x: int, y: int, text: str, red: int = 255, green: int = 255, blue: int = 255):
         """Draw text on the display."""
         if self.canvas:
+            # Debug: log the actual color values being used
+            logger.debug(f"Rendering '{text}' at ({x},{y}) with RGB({red},{green},{blue})")
+            
             color = graphics.Color(red, green, blue)
             try:
                 if self.font and hasattr(self.font, 'default_character'):
                     graphics.DrawText(self.canvas, self.font, x, y, color, text)
                 else:
                     # If no font loaded or font is incomplete, draw simple pixel text as fallback
+                    logger.debug(f"Using pixel fallback for '{text}'")
                     self._draw_simple_text(x, y, text, red, green, blue)
             except (AttributeError, Exception) as e:
                 logger.debug(f"Font rendering failed, using fallback: {e}")
