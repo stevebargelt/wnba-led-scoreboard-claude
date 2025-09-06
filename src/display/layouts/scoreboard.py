@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Tuple
 
 from display.renderer import MatrixRenderer, Color
+from display.graphics import get_logo_manager
 from api.data_models import ScoreboardData
 
 logger = logging.getLogger(__name__)
@@ -23,6 +24,7 @@ class ScoreboardLayout:
         self.renderer = renderer
         self.rows = renderer.rows
         self.cols = renderer.cols
+        self.logo_manager = get_logo_manager()
         
     def _draw_team_score(self, team: str, score: int, x: int, y: int, color: Tuple[int, int, int]):
         """Draw team abbreviation and score."""
@@ -102,34 +104,38 @@ class ScoreboardLayout:
         # Draw team color indicators
         self._draw_team_color_indicators(scoreboard)
         
-        # Layout for 64x32:
-        # Row 6:  Away team & score    Period/Time    Home team & score
-        # Row 18: Leader indicator or tie status
-        # Row 26: Game status text
+        # Layout for 64x32 with logos:
+        # Row 2:  Away logo     Period/Time     Home logo
+        # Row 16: Away score       -           Home score  
+        # Row 24: Leader indicator or tie status
+        # Row 30: Game status text (if room)
         
-        # Away team (left side)
-        self._draw_team_score(
-            scoreboard.away_team, scoreboard.away_score,
-            4, 6, scoreboard.away_color
-        )
+        # Away team logo and score (left side)
+        away_logo_x = 4
+        self.logo_manager.draw_logo(self.renderer, scoreboard.away_team, away_logo_x, 2, 10, 10)
         
-        # Home team (right side)  
-        home_x = self.cols - len(scoreboard.home_team) * 4 - 4
-        self._draw_team_score(
-            scoreboard.home_team, scoreboard.home_score,
-            home_x, 6, scoreboard.home_color
-        )
+        # Away score below logo
+        away_score_x = away_logo_x + 2  # Center score under logo
+        self.renderer.draw_text(away_score_x, 16, str(scoreboard.away_score), *scoreboard.away_color)
         
-        # Period and time (center)
-        center_x = (self.cols - 12) // 2  # Rough estimate for period/time width
+        # Home team logo and score (right side)
+        home_logo_x = self.cols - 14  # 10 for logo + 4 margin
+        self.logo_manager.draw_logo(self.renderer, scoreboard.home_team, home_logo_x, 2, 10, 10)
+        
+        # Home score below logo
+        home_score_x = home_logo_x + 2  # Center score under logo
+        self.renderer.draw_text(home_score_x, 16, str(scoreboard.home_score), *scoreboard.home_color)
+        
+        # Period and time (center top)
+        center_x = (self.cols - 12) // 2  
         self._draw_period_and_time(scoreboard, center_x, 6)
         
         # Leader indicator
-        self._draw_leader_indicator(scoreboard, 18)
+        self._draw_leader_indicator(scoreboard, 24)
         
-        # Status text
-        if scoreboard.status_text:
-            self._draw_status_text(scoreboard.status_text, 26)
+        # Status text (compressed, only if short enough)
+        if scoreboard.status_text and len(scoreboard.status_text) <= 8:
+            self._draw_status_text(scoreboard.status_text, 30)
     
     def render_32x32(self, scoreboard: ScoreboardData, frame_count: int = 0):
         """Render scoreboard layout for 32x32 display (compact)."""

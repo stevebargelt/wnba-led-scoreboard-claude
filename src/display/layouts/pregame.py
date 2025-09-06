@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Tuple
 
 from display.renderer import MatrixRenderer, Color
+from display.graphics import get_logo_manager
 from api.data_models import CountdownData
 
 logger = logging.getLogger(__name__)
@@ -23,6 +24,7 @@ class PregameLayout:
         self.renderer = renderer
         self.rows = renderer.rows
         self.cols = renderer.cols
+        self.logo_manager = get_logo_manager()
         
     def _draw_team_vs_team(self, countdown: CountdownData, y_pos: int):
         """Draw team matchup (e.g., 'NY @ SEA')."""
@@ -99,16 +101,32 @@ class PregameLayout:
         # Draw team color bars
         self._draw_team_colors_bars(countdown)
         
-        # Layout for 64x32:
-        # Row 8:  Team matchup
-        # Row 16: Large countdown
-        # Row 24: Game time
-        # Row 29: Animated dots
+        # Layout for 64x32 with logos:
+        # Row 2:  Away logo    "VS"    Home logo  
+        # Row 14: Team names (NY @ SEA)
+        # Row 20: Large countdown timer
+        # Row 28: Game time
         
-        self._draw_team_vs_team(countdown, 8)
-        self._draw_countdown_large(countdown, 16)
-        self._draw_game_time(countdown, 24)
-        self._draw_animated_dots(frame_count)
+        # Away team logo (left)
+        away_logo_x = 8
+        self.logo_manager.draw_logo(self.renderer, countdown.away_team, away_logo_x, 2, 10, 10)
+        
+        # Home team logo (right)
+        home_logo_x = self.cols - 18  # 10 for logo + 8 margin
+        self.logo_manager.draw_logo(self.renderer, countdown.home_team, home_logo_x, 2, 10, 10)
+        
+        # "VS" in center between logos
+        vs_x = (self.cols - 8) // 2  # "VS" is about 8 pixels wide
+        self.renderer.draw_text(vs_x, 6, "VS", *Color.WHITE)
+        
+        # Team matchup below logos
+        self._draw_team_vs_team(countdown, 14)
+        
+        # Large countdown timer
+        self._draw_countdown_large(countdown, 20)
+        
+        # Game time
+        self._draw_game_time(countdown, 28)
     
     def render_32x32(self, countdown: CountdownData, frame_count: int = 0):
         """Render pregame layout for 32x32 display."""

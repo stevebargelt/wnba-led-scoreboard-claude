@@ -16,6 +16,7 @@ from display.renderer import MatrixRenderer
 from display.layouts.pregame import PregameLayout
 from display.layouts.scoreboard import ScoreboardLayout
 from display.layouts.idle import IdleLayout
+from display.graphics import get_logo_manager
 from api.data_models import DisplayState
 
 # Global flag for graceful shutdown
@@ -83,6 +84,11 @@ def main():
         
         # Initialize state manager
         state_manager = WNBAStateManager()
+        
+        # Preload logos for favorite teams
+        logo_manager = get_logo_manager()
+        logger.info("Preloading logos for favorite teams...")
+        logo_manager.preload_favorite_logos(config.favorite_teams)
         
         logger.info("All components initialized successfully")
         
