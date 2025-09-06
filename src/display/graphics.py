@@ -5,8 +5,16 @@ import logging
 import requests
 from pathlib import Path
 from typing import Optional, Dict, Tuple
-from PIL import Image
-import numpy as np
+
+try:
+    from PIL import Image
+    import numpy as np
+    LOGO_SUPPORT = True
+except ImportError as e:
+    logging.warning(f"Logo support disabled - missing dependencies: {e}")
+    LOGO_SUPPORT = False
+    Image = None
+    np = None
 
 from .renderer import MatrixRenderer
 
@@ -54,6 +62,10 @@ class LogoManager:
     
     def _load_and_resize_logo(self, team_abbrev: str, width: int, height: int) -> Optional[np.ndarray]:
         """Load and resize a logo to fit the display."""
+        if not LOGO_SUPPORT:
+            logger.debug(f"Logo support disabled - cannot load {team_abbrev}")
+            return None
+            
         logo_file = self.cache_dir / f"{team_abbrev.lower()}.png"
         
         # Download if not cached
@@ -169,6 +181,10 @@ class LogoManager:
     
     def preload_favorite_logos(self, team_abbreviations: list, width: int = 12, height: int = 12):
         """Preload logos for favorite teams."""
+        if not LOGO_SUPPORT:
+            logger.info("Logo support disabled - using fallback graphics only")
+            return
+            
         logger.info(f"Preloading logos for teams: {team_abbreviations}")
         
         for team_abbrev in team_abbreviations:
@@ -176,7 +192,7 @@ class LogoManager:
             if logo is not None:
                 logger.info(f"Preloaded logo for {team_abbrev}")
             else:
-                logger.warning(f"Could not preload logo for {team_abbrev}")
+                logger.warning(f"Could not preload logo for {team_abbrev} - will use fallback")
 
 
 # Global logo manager instance
