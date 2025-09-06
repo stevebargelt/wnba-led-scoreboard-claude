@@ -13,7 +13,7 @@
   },
   "api": {
     "update_interval": 15,
-    "pregame_hours": 2,
+    "pregame_hours": 8,
     "timeout": 10
   },
   "logging": {
