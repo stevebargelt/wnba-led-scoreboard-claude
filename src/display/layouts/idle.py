@@ -85,8 +85,8 @@ class IdleLayout:
         
         try:
             if self.cols >= 64:
-                # Layout for 64x32 or larger
-                self._draw_wnba_logo_text(6)
+                # Layout for 64x32 or larger (adjusted for 5-pixel tall characters)
+                self._draw_wnba_logo_text(5)  # WNBA at top (rows 5-9)
                 
                 # Split long messages even for 64-wide displays
                 message = idle_data.message
@@ -98,18 +98,18 @@ class IdleLayout:
                         line1 = " ".join(words[:mid])
                         line2 = " ".join(words[mid:])
                         
-                        self._draw_centered_text(line1, 14, Color.YELLOW)
-                        self._draw_centered_text(line2, 22, Color.YELLOW)
+                        self._draw_centered_text(line1, 12, Color.YELLOW)  # rows 12-16
+                        self._draw_centered_text(line2, 19, Color.YELLOW)  # rows 19-23
                     else:
                         # Just draw what fits
                         max_chars = (self.cols - 8) // 4
                         short_message = message[:max_chars] if len(message) > max_chars else message
-                        self._draw_centered_text(short_message, 16, Color.YELLOW)
+                        self._draw_centered_text(short_message, 15, Color.YELLOW)  # rows 15-19
                 else:
-                    self._draw_centered_text(message, 16, Color.YELLOW)
+                    self._draw_centered_text(message, 15, Color.YELLOW)  # rows 15-19
                 
                 if idle_data.show_clock:
-                    self._draw_clock(idle_data.current_time, 28)
+                    self._draw_clock(idle_data.current_time, 26)  # rows 26-30 (clock is 2 lines)
                     
             else:
                 # Compact layout for 32x32
