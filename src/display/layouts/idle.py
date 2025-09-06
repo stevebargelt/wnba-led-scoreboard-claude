@@ -87,10 +87,29 @@ class IdleLayout:
             if self.cols >= 64:
                 # Layout for 64x32 or larger
                 self._draw_wnba_logo_text(6)
-                self._draw_centered_text(idle_data.message, 16, Color.YELLOW)
+                
+                # Split long messages even for 64-wide displays
+                message = idle_data.message
+                if len(message) * 4 > self.cols - 8:  # Too long for one line
+                    words = message.split()
+                    if len(words) >= 3:  # Split into two lines
+                        # Try to split roughly in half
+                        mid = len(words) // 2
+                        line1 = " ".join(words[:mid])
+                        line2 = " ".join(words[mid:])
+                        
+                        self._draw_centered_text(line1, 14, Color.YELLOW)
+                        self._draw_centered_text(line2, 22, Color.YELLOW)
+                    else:
+                        # Just draw what fits
+                        max_chars = (self.cols - 8) // 4
+                        short_message = message[:max_chars] if len(message) > max_chars else message
+                        self._draw_centered_text(short_message, 16, Color.YELLOW)
+                else:
+                    self._draw_centered_text(message, 16, Color.YELLOW)
                 
                 if idle_data.show_clock:
-                    self._draw_clock(idle_data.current_time, 24)
+                    self._draw_clock(idle_data.current_time, 28)
                     
             else:
                 # Compact layout for 32x32
