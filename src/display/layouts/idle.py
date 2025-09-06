@@ -49,7 +49,7 @@ class IdleLayout:
     
     def _draw_wnba_logo_text(self, y: int):
         """Draw simple WNBA text logo."""
-        self._draw_centered_text("WNBA", y, Color.ORANGE)
+        self._draw_centered_text("WNBA", y, Color.WHITE)
     
     def _draw_animated_border(self, frame_count: int):
         """Draw an animated border effect."""
