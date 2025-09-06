@@ -92,15 +92,20 @@ def main():
         # Main display loop
         while running:
             try:
-                # Check if we need to refresh data
+                # Only get new data when refresh is needed
                 if state_manager.should_refresh():
                     logger.debug("Refreshing game data...")
-                    
-                # Get current display context
-                context = state_manager.get_current_display_context()
+                    context = state_manager.get_current_display_context()
+                    state_manager.schedule_next_refresh(context)
+                else:
+                    # Use cached context if no refresh needed
+                    context = getattr(state_manager, '_last_context', None)
+                    if context is None:
+                        context = state_manager.get_current_display_context()
+                        state_manager.schedule_next_refresh(context)
                 
-                # Schedule next refresh
-                state_manager.schedule_next_refresh(context)
+                # Cache the context
+                state_manager._last_context = context
                 
                 # Render based on current state
                 if context.state == DisplayState.LIVE:

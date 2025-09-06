@@ -57,12 +57,15 @@ class MatrixRenderer:
             self.matrix = RGBMatrix(options=options)
             self.canvas = self.matrix.CreateFrameCanvas()
             
-            # Load default font with fallbacks
+            # Load default font with fallbacks - Pi specific paths first
             self.font = graphics.Font()
             font_paths = [
-                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",  # Linux
-                "/System/Library/Fonts/Arial.ttf",  # macOS
-                "/Windows/Fonts/arial.ttf",  # Windows
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",        # Pi common
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",   # Pi bold
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf", # Pi alternative
+                "/usr/share/fonts/TTF/DejaVuSans.ttf",                    # Some Pi installs
+                "/System/Library/Fonts/Arial.ttf",                       # macOS
+                "/Windows/Fonts/arial.ttf",                              # Windows
             ]
             
             font_loaded = False
@@ -76,7 +79,8 @@ class MatrixRenderer:
                     logger.debug(f"Could not load font {font_path}: {e}")
             
             if not font_loaded:
-                logger.warning("No font could be loaded - text rendering may not work properly")
+                logger.warning("No font could be loaded - using pixel fallback font")
+                self.font = None  # Will trigger fallback pixel font
             
             logger.info("Matrix initialized successfully")
             return True
