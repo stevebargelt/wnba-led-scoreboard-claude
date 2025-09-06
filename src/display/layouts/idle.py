@@ -29,9 +29,6 @@ class IdleLayout:
         if color is None:
             color = Color.WHITE
         
-        # Debug: log what color we're trying to use
-        logger.debug(f"Drawing '{text}' with color {color}")
-        
         text_width = len(text) * 4  # Rough estimate
         x_start = max(0, (self.cols - text_width) // 2)
         
@@ -52,7 +49,7 @@ class IdleLayout:
     
     def _draw_wnba_logo_text(self, y: int):
         """Draw simple WNBA text logo."""
-        self._draw_centered_text("WNBA", y, Color.WHITE)
+        self._draw_centered_text("WNBA", y, Color.ORANGE)
     
     def _draw_animated_border(self, frame_count: int):
         """Draw an animated border effect."""
