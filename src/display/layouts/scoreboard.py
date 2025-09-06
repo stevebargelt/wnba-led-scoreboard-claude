@@ -104,38 +104,33 @@ class ScoreboardLayout:
         # Draw team color indicators
         self._draw_team_color_indicators(scoreboard)
         
-        # Layout for 64x32 with logos:
+        # Compact layout for 64x32 with logos:
         # Row 2:  Away logo     Period/Time     Home logo
-        # Row 16: Away score       -           Home score  
-        # Row 24: Leader indicator or tie status
-        # Row 30: Game status text (if room)
+        # Row 15: Away score       -           Home score  
+        # Row 25: Leader indicator or tie status
         
         # Away team logo and score (left side)
-        away_logo_x = 4
-        self.logo_manager.draw_logo(self.renderer, scoreboard.away_team, away_logo_x, 2, 10, 10)
+        away_logo_x = 3
+        self.logo_manager.draw_logo(self.renderer, scoreboard.away_team, away_logo_x, 2, 8, 8)
         
         # Away score below logo
-        away_score_x = away_logo_x + 2  # Center score under logo
-        self.renderer.draw_text(away_score_x, 16, str(scoreboard.away_score), *scoreboard.away_color)
+        away_score_x = away_logo_x + 1  # Center score under logo
+        self.renderer.draw_text(away_score_x, 15, str(scoreboard.away_score), *scoreboard.away_color)
         
         # Home team logo and score (right side)
-        home_logo_x = self.cols - 14  # 10 for logo + 4 margin
-        self.logo_manager.draw_logo(self.renderer, scoreboard.home_team, home_logo_x, 2, 10, 10)
+        home_logo_x = self.cols - 11  # 8 for logo + 3 margin
+        self.logo_manager.draw_logo(self.renderer, scoreboard.home_team, home_logo_x, 2, 8, 8)
         
         # Home score below logo
-        home_score_x = home_logo_x + 2  # Center score under logo
-        self.renderer.draw_text(home_score_x, 16, str(scoreboard.home_score), *scoreboard.home_color)
+        home_score_x = home_logo_x + 1  # Center score under logo
+        self.renderer.draw_text(home_score_x, 15, str(scoreboard.home_score), *scoreboard.home_color)
         
-        # Period and time (center top)
+        # Period and time (center, higher up)
         center_x = (self.cols - 12) // 2  
-        self._draw_period_and_time(scoreboard, center_x, 6)
+        self._draw_period_and_time(scoreboard, center_x, 2)
         
-        # Leader indicator
-        self._draw_leader_indicator(scoreboard, 24)
-        
-        # Status text (compressed, only if short enough)
-        if scoreboard.status_text and len(scoreboard.status_text) <= 8:
-            self._draw_status_text(scoreboard.status_text, 30)
+        # Leader indicator (moved up)
+        self._draw_leader_indicator(scoreboard, 25)
     
     def render_32x32(self, scoreboard: ScoreboardData, frame_count: int = 0):
         """Render scoreboard layout for 32x32 display (compact)."""
