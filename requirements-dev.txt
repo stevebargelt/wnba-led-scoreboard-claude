@@ -1,0 +1,5 @@
+# Development dependencies (for emulator and testing)
+# Use this file for development on non-Pi systems
+
+-r requirements.txt
+rgbmatrix-emulator>=0.12.3

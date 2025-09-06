@@ -1,7 +1,13 @@
-rpi-rgb-led-matrix>=1.0.0
-rgbmatrix-emulator>=0.12.3
+# Core dependencies for all platforms
 requests>=2.31.0
 python-dateutil>=2.8.2
 Pillow>=10.0.0
 numpy>=1.24.0
 pytz>=2023.3
+
+# Development/emulator dependencies (optional for Pi)
+# Install with: pip install -r requirements-dev.txt
+# rgbmatrix-emulator>=0.12.3
+
+# Note: rpi-rgb-led-matrix must be compiled from source on Raspberry Pi
+# See INSTALL.md for complete installation instructions
