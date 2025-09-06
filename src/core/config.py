@@ -36,6 +36,14 @@ class LoggingConfig:
 
 
 @dataclass
+class TestModeConfig:
+    """Test mode configuration settings."""
+    enabled: bool = False
+    simulate_live_game: bool = False
+    simulate_pregame: bool = False
+
+
+@dataclass
 class Team:
     """Team information."""
     name: str
@@ -62,6 +70,7 @@ class Config:
         self.display = DisplayConfig()
         self.api = ApiConfig()
         self.logging = LoggingConfig()
+        self.test_mode = TestModeConfig()
         self.favorite_teams: List[str] = []
         self.teams: Dict[str, Team] = {}
         
@@ -133,6 +142,15 @@ class Config:
                 self.logging = LoggingConfig(
                     level=logging_data.get('level', 'INFO'),
                     file=logging_data.get('file', 'wnba_scoreboard.log')
+                )
+            
+            # Load test mode config
+            if 'test_mode' in config_data:
+                test_data = config_data['test_mode']
+                self.test_mode = TestModeConfig(
+                    enabled=test_data.get('enabled', False),
+                    simulate_live_game=test_data.get('simulate_live_game', False),
+                    simulate_pregame=test_data.get('simulate_pregame', False)
                 )
                 
         except json.JSONDecodeError as e:

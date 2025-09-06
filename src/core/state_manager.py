@@ -223,14 +223,33 @@ class WNBAStateManager:
             DisplayContext with appropriate state and data
         """
         try:
-            # Get games for today and tomorrow
-            today = datetime.now()
-            today_games = self.api_client.get_scoreboard(today)
-            
-            tomorrow = today + timedelta(days=1)
-            tomorrow_games = self.api_client.get_scoreboard(tomorrow)
-            
-            all_games = today_games + tomorrow_games
+            # Check if test mode is enabled
+            if self.config.test_mode.enabled:
+                from api.test_data import TestDataGenerator
+                all_games = []
+                
+                if self.config.test_mode.simulate_live_game:
+                    # Create a live game with favorite teams
+                    fav_teams = self.favorite_teams[:2] if len(self.favorite_teams) >= 2 else ['SEA', 'MIN']
+                    live_game = TestDataGenerator.create_live_game(fav_teams[0], fav_teams[1])
+                    all_games.append(live_game)
+                    logger.info(f"Test mode: Created live game {live_game.away_team.abbreviation} @ {live_game.home_team.abbreviation}")
+                
+                if self.config.test_mode.simulate_pregame:
+                    # Create a pregame with favorite teams
+                    fav_teams = self.favorite_teams[:2] if len(self.favorite_teams) >= 2 else ['NY', 'LAS'] 
+                    pregame = TestDataGenerator.create_pregame(fav_teams[0], fav_teams[1], 1.5)
+                    all_games.append(pregame)
+                    logger.info(f"Test mode: Created pregame {pregame.away_team.abbreviation} @ {pregame.home_team.abbreviation}")
+            else:
+                # Get real games for today and tomorrow
+                today = datetime.now()
+                today_games = self.api_client.get_scoreboard(today)
+                
+                tomorrow = today + timedelta(days=1)
+                tomorrow_games = self.api_client.get_scoreboard(tomorrow)
+                
+                all_games = today_games + tomorrow_games
             
             # Filter for favorite team games or get all games
             favorite_games = []

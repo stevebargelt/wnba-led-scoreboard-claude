@@ -9,7 +9,7 @@
     "refresh_rate": 30,
     "led_rows": 32,
     "led_cols": 64,
-    "emulator": true
+    "emulator": false
   },
   "api": {
     "update_interval": 15,
@@ -17,9 +17,9 @@
     "timeout": 10
   },
   "test_mode": {
-    "enabled": false,
+    "enabled": true,
     "simulate_live_game": false,
-    "simulate_pregame": false
+    "simulate_pregame": true
   },
   "logging": {
     "level": "INFO",
