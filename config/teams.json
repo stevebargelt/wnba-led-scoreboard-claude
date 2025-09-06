@@ -1,0 +1,70 @@
+{
+  "teams": {
+    "ATL": {
+      "name": "Atlanta Dream",
+      "abbreviation": "ATL",
+      "primary_color": "#C8102E",
+      "secondary_color": "#000000"
+    },
+    "CHI": {
+      "name": "Chicago Sky",
+      "abbreviation": "CHI",
+      "primary_color": "#418FDE",
+      "secondary_color": "#FFB81C"
+    },
+    "CONN": {
+      "name": "Connecticut Sun",
+      "abbreviation": "CONN",
+      "primary_color": "#E03A3E",
+      "secondary_color": "#003399"
+    },
+    "DAL": {
+      "name": "Dallas Wings",
+      "abbreviation": "DAL",
+      "primary_color": "#0053BC",
+      "secondary_color": "#FFC72C"
+    },
+    "IND": {
+      "name": "Indiana Fever",
+      "abbreviation": "IND",
+      "primary_color": "#FDBB30",
+      "secondary_color": "#E03A3E"
+    },
+    "LAS": {
+      "name": "Las Vegas Aces",
+      "abbreviation": "LAS",
+      "primary_color": "#000000",
+      "secondary_color": "#C8102E"
+    },
+    "MIN": {
+      "name": "Minnesota Lynx",
+      "abbreviation": "MIN",
+      "primary_color": "#236192",
+      "secondary_color": "#9EA2A2"
+    },
+    "NY": {
+      "name": "New York Liberty",
+      "abbreviation": "NY",
+      "primary_color": "#86CEBC",
+      "secondary_color": "#000000"
+    },
+    "PHX": {
+      "name": "Phoenix Mercury",
+      "abbreviation": "PHX",
+      "primary_color": "#CB6015",
+      "secondary_color": "#1D1160"
+    },
+    "SEA": {
+      "name": "Seattle Storm",
+      "abbreviation": "SEA",
+      "primary_color": "#2C5234",
+      "secondary_color": "#FDD026"
+    },
+    "WAS": {
+      "name": "Washington Mystics",
+      "abbreviation": "WAS",
+      "primary_color": "#C8102E",
+      "secondary_color": "#002B5C"
+    }
+  }
+}
