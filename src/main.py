@@ -107,6 +107,18 @@ def main():
                 # Cache the context
                 state_manager._last_context = context
                 
+                # Debug: Log state changes
+                if not hasattr(state_manager, '_last_logged_state') or state_manager._last_logged_state != context.state:
+                    if context.state == DisplayState.LIVE:
+                        logger.info(f"Displaying LIVE: {context.scoreboard.away_team} vs {context.scoreboard.home_team}")
+                    elif context.state == DisplayState.PREGAME:
+                        logger.info(f"Displaying PREGAME: {context.countdown.away_team} @ {context.countdown.home_team} in {context.countdown.countdown_text}")
+                    elif context.state == DisplayState.IDLE:
+                        logger.info(f"Displaying IDLE: {context.idle.message}")
+                    elif context.state == DisplayState.ERROR:
+                        logger.info(f"Displaying ERROR: {context.error.error_message}")
+                    state_manager._last_logged_state = context.state
+                
                 # Render based on current state
                 if context.state == DisplayState.LIVE:
                     scoreboard_layout.render(context.scoreboard, frame_count)
