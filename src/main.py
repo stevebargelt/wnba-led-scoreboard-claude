@@ -88,6 +88,8 @@ def main():
         
         frame_count = 0
         last_status_log = datetime.now()
+        last_content_hash = None
+        needs_redraw = True
         
         # Main display loop
         while running:
@@ -97,15 +99,37 @@ def main():
                     logger.debug("Refreshing game data...")
                     context = state_manager.get_current_display_context()
                     state_manager.schedule_next_refresh(context)
+                    needs_redraw = True
                 else:
                     # Use cached context if no refresh needed
                     context = getattr(state_manager, '_last_context', None)
                     if context is None:
                         context = state_manager.get_current_display_context()
                         state_manager.schedule_next_refresh(context)
+                        needs_redraw = True
                 
                 # Cache the context
                 state_manager._last_context = context
+                
+                # Check if content has changed
+                if context.state == DisplayState.IDLE:
+                    # For idle state, only redraw if content actually changes
+                    content_hash = hash((
+                        context.state,
+                        str(context.idle) if context.idle else ""
+                    ))
+                else:
+                    # For other states, include animation frame for smooth updates
+                    content_hash = hash((
+                        context.state,
+                        str(context.scoreboard) if context.scoreboard else "",
+                        str(context.countdown) if context.countdown else "", 
+                        frame_count // 30  # Animation updates every second
+                    ))
+                
+                if content_hash != last_content_hash:
+                    needs_redraw = True
+                    last_content_hash = content_hash
                 
                 # Debug: Log state changes
                 if not hasattr(state_manager, '_last_logged_state') or state_manager._last_logged_state != context.state:
@@ -119,26 +143,29 @@ def main():
                         logger.info(f"Displaying ERROR: {context.error.error_message}")
                     state_manager._last_logged_state = context.state
                 
-                # Render based on current state
-                if context.state == DisplayState.LIVE:
-                    scoreboard_layout.render(context.scoreboard, frame_count)
+                # Only render if something changed
+                if needs_redraw:
+                    if context.state == DisplayState.LIVE:
+                        scoreboard_layout.render(context.scoreboard, frame_count)
+                        
+                    elif context.state == DisplayState.PREGAME:
+                        pregame_layout.render(context.countdown, frame_count)
+                        
+                    elif context.state == DisplayState.FINAL:
+                        # Show final score (use scoreboard layout)
+                        scoreboard_layout.render(context.scoreboard, frame_count)
+                        
+                    elif context.state == DisplayState.IDLE:
+                        idle_layout.render(context.idle, frame_count)
+                        
+                    elif context.state == DisplayState.ERROR:
+                        # Simple error display
+                        renderer.clear()
+                        renderer.draw_text(2, 10, "API ERROR", 255, 0, 0)
+                        renderer.draw_text(2, 20, f"RETRY {context.error.retry_in}S", 255, 165, 0)
+                        renderer.refresh()
                     
-                elif context.state == DisplayState.PREGAME:
-                    pregame_layout.render(context.countdown, frame_count)
-                    
-                elif context.state == DisplayState.FINAL:
-                    # Show final score (use scoreboard layout)
-                    scoreboard_layout.render(context.scoreboard, frame_count)
-                    
-                elif context.state == DisplayState.IDLE:
-                    idle_layout.render(context.idle, frame_count)
-                    
-                elif context.state == DisplayState.ERROR:
-                    # Simple error display
-                    renderer.clear()
-                    renderer.draw_text(2, 10, "API ERROR", 255, 0, 0)
-                    renderer.draw_text(2, 20, f"RETRY {context.error.retry_in}S", 255, 165, 0)
-                    renderer.refresh()
+                    needs_redraw = False
                 
                 # Log status periodically
                 now = datetime.now()
@@ -148,7 +175,7 @@ def main():
                     last_status_log = now
                 
                 frame_count += 1
-                time.sleep(1/30)  # ~30 FPS
+                time.sleep(1/10)  # Reduced to 10 FPS to reduce load
                 
             except KeyboardInterrupt:
                 break

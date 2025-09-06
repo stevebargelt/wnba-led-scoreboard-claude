@@ -130,8 +130,8 @@ class IdleLayout:
                 else:
                     self._draw_centered_text(message, 18, Color.YELLOW)
             
-            # Add subtle animation
-            self._draw_animated_border(frame_count)
+            # Skip animations to prevent flashing
+            # self._draw_animated_border(frame_count)
             
             # Refresh the display
             self.renderer.refresh()
