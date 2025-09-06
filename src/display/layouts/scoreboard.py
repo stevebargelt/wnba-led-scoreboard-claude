@@ -64,32 +64,6 @@ class ScoreboardLayout:
         # Home team indicator on right
         self.renderer.fill_rectangle(self.cols - indicator_width, 0, indicator_width, self.rows, *scoreboard.home_color)
     
-    def _draw_leader_indicator(self, scoreboard: ScoreboardData, y: int):
-        """Draw an indicator showing which team is leading."""
-        if scoreboard.is_tied:
-            # Draw "TIED" in center
-            tie_text = "TIED"
-            x_center = (self.cols - len(tie_text) * 4) // 2
-            self.renderer.draw_text(x_center, y, tie_text, *Color.YELLOW)
-        elif scoreboard.leader:
-            # Draw arrow pointing to leader
-            leader_color = scoreboard.away_color if scoreboard.leader == scoreboard.away_team else scoreboard.home_color
-            
-            if scoreboard.leader == scoreboard.away_team:
-                # Arrow pointing left
-                arrow_x = 8
-                arrow_text = "<"
-            else:
-                # Arrow pointing right  
-                arrow_x = self.cols - 12
-                arrow_text = ">"
-            
-            self.renderer.draw_text(arrow_x, y, arrow_text, *leader_color)
-            
-            # Show lead amount
-            lead_text = f"+{scoreboard.lead_amount}"
-            lead_x = arrow_x + (8 if arrow_text == "<" else -16)
-            self.renderer.draw_text(lead_x, y, lead_text, *leader_color)
     
     def _draw_status_text(self, status: str, y: int):
         """Draw game status text if it fits."""
@@ -104,33 +78,29 @@ class ScoreboardLayout:
         # Draw team color indicators
         self._draw_team_color_indicators(scoreboard)
         
-        # Compact layout for 64x32 with logos:
-        # Row 2:  Away logo     Period/Time     Home logo
-        # Row 15: Away score       -           Home score  
-        # Row 25: Leader indicator or tie status
+        # Layout for 64x32 with large 16x16 logos:
+        # Row 8:  Away logo     Period/Time     Home logo
+        # Row 26: Away score       -           Home score  
         
-        # Away team logo and score (left side)
-        away_logo_x = 3
-        self.logo_manager.draw_logo(self.renderer, scoreboard.away_team, away_logo_x, 2, 8, 8)
+        # Away team logo (left side) - 16x16 pixels
+        away_logo_x = 4
+        self.logo_manager.draw_logo(self.renderer, scoreboard.away_team, away_logo_x, 8, 16, 16)
         
         # Away score below logo
-        away_score_x = away_logo_x + 1  # Center score under logo
-        self.renderer.draw_text(away_score_x, 15, str(scoreboard.away_score), *scoreboard.away_color)
+        away_score_x = away_logo_x + 6  # Center score under 16px logo
+        self.renderer.draw_text(away_score_x, 26, str(scoreboard.away_score), *scoreboard.away_color)
         
-        # Home team logo and score (right side)
-        home_logo_x = self.cols - 11  # 8 for logo + 3 margin
-        self.logo_manager.draw_logo(self.renderer, scoreboard.home_team, home_logo_x, 2, 8, 8)
+        # Home team logo (right side) - 16x16 pixels
+        home_logo_x = self.cols - 20  # 16 for logo + 4 margin
+        self.logo_manager.draw_logo(self.renderer, scoreboard.home_team, home_logo_x, 8, 16, 16)
         
         # Home score below logo
-        home_score_x = home_logo_x + 1  # Center score under logo
-        self.renderer.draw_text(home_score_x, 15, str(scoreboard.home_score), *scoreboard.home_color)
+        home_score_x = home_logo_x + 6  # Center score under 16px logo
+        self.renderer.draw_text(home_score_x, 26, str(scoreboard.home_score), *scoreboard.home_color)
         
-        # Period and time (center, higher up)
+        # Period and time (center between logos)
         center_x = (self.cols - 12) // 2  
-        self._draw_period_and_time(scoreboard, center_x, 2)
-        
-        # Leader indicator (moved up)
-        self._draw_leader_indicator(scoreboard, 25)
+        self._draw_period_and_time(scoreboard, center_x, 12)
     
     def render_32x32(self, scoreboard: ScoreboardData, frame_count: int = 0):
         """Render scoreboard layout for 32x32 display (compact)."""
@@ -180,13 +150,7 @@ class ScoreboardLayout:
         pt_x = (self.cols - len(period_time_text) * 4) // 2
         self.renderer.draw_text(pt_x, 20, period_time_text, *Color.CYAN)
         
-        # Simple leader indicator for compact layout
-        if scoreboard.leader:
-            lead_text = f"{scoreboard.leader}+{scoreboard.lead_amount}"
-            if len(lead_text) * 4 <= self.cols:
-                lead_x = (self.cols - len(lead_text) * 4) // 2
-                leader_color = scoreboard.away_color if scoreboard.leader == scoreboard.away_team else scoreboard.home_color
-                self.renderer.draw_text(lead_x, 28, lead_text, *leader_color)
+        # Leader indicators removed to save space for larger logos
     
     def render(self, scoreboard: ScoreboardData, frame_count: int = 0):
         """
