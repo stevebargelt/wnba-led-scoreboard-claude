@@ -78,29 +78,33 @@ class ScoreboardLayout:
         # Draw team color indicators
         self._draw_team_color_indicators(scoreboard)
         
-        # Layout for 64x32 with large 16x16 logos:
-        # Row 8:  Away logo     Period/Time     Home logo
-        # Row 26: Away score       -           Home score  
+        # Layout for 64x32 with large 20x20 logos:
+        # Row 2:  Away logo (20x20) starts at col 4
+        # Row 2:  Home logo (20x20) at same position on right
+        # Row 10: Quarter/Time centered between logos
+        # Row 24: Scores below logos
         
-        # Away team logo (left side) - 16x16 pixels
+        # Away team logo (left side) - 20x20 pixels starting at column 4, row 2
         away_logo_x = 4
-        self.logo_manager.draw_logo(self.renderer, scoreboard.away_team, away_logo_x, 8, 16, 16)
+        away_logo_y = 2
+        self.logo_manager.draw_logo(self.renderer, scoreboard.away_team, away_logo_x, away_logo_y, 20, 20)
+        
+        # Home team logo (right side) - 20x20 pixels, same relative position
+        home_logo_x = self.cols - 24  # 20 for logo + 4 margin (mirrors left side)
+        home_logo_y = 2
+        self.logo_manager.draw_logo(self.renderer, scoreboard.home_team, home_logo_x, home_logo_y, 20, 20)
+        
+        # Period and time centered between logos
+        center_x = (self.cols - 12) // 2  # Center of 64-pixel display
+        self._draw_period_and_time(scoreboard, center_x, 10)
         
         # Away score below logo
-        away_score_x = away_logo_x + 6  # Center score under 16px logo
-        self.renderer.draw_text(away_score_x, 26, str(scoreboard.away_score), *scoreboard.away_color)
-        
-        # Home team logo (right side) - 16x16 pixels
-        home_logo_x = self.cols - 20  # 16 for logo + 4 margin
-        self.logo_manager.draw_logo(self.renderer, scoreboard.home_team, home_logo_x, 8, 16, 16)
+        away_score_x = away_logo_x + 8  # Center score under 20px logo
+        self.renderer.draw_text(away_score_x, 24, str(scoreboard.away_score), *scoreboard.away_color)
         
         # Home score below logo
-        home_score_x = home_logo_x + 6  # Center score under 16px logo
-        self.renderer.draw_text(home_score_x, 26, str(scoreboard.home_score), *scoreboard.home_color)
-        
-        # Period and time (center between logos)
-        center_x = (self.cols - 12) // 2  
-        self._draw_period_and_time(scoreboard, center_x, 12)
+        home_score_x = home_logo_x + 8  # Center score under 20px logo
+        self.renderer.draw_text(home_score_x, 24, str(scoreboard.home_score), *scoreboard.home_color)
     
     def render_32x32(self, scoreboard: ScoreboardData, frame_count: int = 0):
         """Render scoreboard layout for 32x32 display (compact)."""

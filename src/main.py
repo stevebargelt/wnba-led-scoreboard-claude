@@ -85,10 +85,10 @@ def main():
         # Initialize state manager
         state_manager = WNBAStateManager()
         
-        # Preload logos for favorite teams
+        # Preload logos for favorite teams (20x20 for scoreboard)
         logo_manager = get_logo_manager()
-        logger.info("Preloading logos for favorite teams...")
-        logo_manager.preload_favorite_logos(config.favorite_teams)
+        logger.info("Preloading 20x20 logos for favorite teams...")
+        logo_manager.preload_favorite_logos(config.favorite_teams, width=20, height=20)
         
         logger.info("All components initialized successfully")
         
