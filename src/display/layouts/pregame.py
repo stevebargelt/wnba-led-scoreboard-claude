@@ -106,28 +106,27 @@ class PregameLayout:
         """Render pregame layout for 64x32 display."""
         self.renderer.clear()
         
-        # Draw team color bars
-        self._draw_team_colors_bars(countdown)
+        # Team color bars removed to make room for larger logos
         
-        # Layout for 64x32 with large logos:
-        # Row 2:  Away logo (16x16)    Home logo (16x16)
-        # Row 20: Team names and countdown
-        # Row 28: Game time
+        # Layout for 64x32 with large 20x20 logos spread wide:
+        # Row 2:  Away logo (20x20)    Home logo (20x20)
+        # Row 24: Team names and countdown
+        # Row 30: Game time
         
-        # Away team logo (left) - 16x16 pixels
-        away_logo_x = 6
-        self.logo_manager.draw_logo(self.renderer, countdown.away_team, away_logo_x, 2, 16, 16)
+        # Away team logo (left) - 20x20 pixels, close to edge
+        away_logo_x = 1
+        self.logo_manager.draw_logo(self.renderer, countdown.away_team, away_logo_x, 2, 20, 20)
         
-        # Home team logo (right) - 16x16 pixels  
-        home_logo_x = self.cols - 22  # 16 for logo + 6 margin
-        self.logo_manager.draw_logo(self.renderer, countdown.home_team, home_logo_x, 2, 16, 16)
+        # Home team logo (right) - 20x20 pixels, close to edge
+        home_logo_x = self.cols - 21  # 20 for logo + 1 margin
+        self.logo_manager.draw_logo(self.renderer, countdown.home_team, home_logo_x, 2, 20, 20)
         
         # Team matchup and countdown on same line
         matchup_text = f"{countdown.away_team}@{countdown.home_team} {countdown.countdown_text}"
-        self._draw_team_vs_team_compact(matchup_text, 20)
+        self._draw_team_vs_team_compact(matchup_text, 24)
         
         # Game time
-        self._draw_game_time(countdown, 28)
+        self._draw_game_time(countdown, 30)
     
     def render_32x32(self, countdown: CountdownData, frame_count: int = 0):
         """Render pregame layout for 32x32 display."""

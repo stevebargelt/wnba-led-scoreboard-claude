@@ -75,8 +75,7 @@ class ScoreboardLayout:
         """Render scoreboard layout for 64x32 display."""
         self.renderer.clear()
         
-        # Draw team color indicators
-        self._draw_team_color_indicators(scoreboard)
+        # Team color indicators removed to make room for larger/wider logo placement
         
         # Layout for 64x32 with large 20x20 logos:
         # Row 2:  Away logo (20x20) starts at col 4
@@ -84,13 +83,13 @@ class ScoreboardLayout:
         # Row 10: Quarter/Time centered between logos
         # Row 24: Scores below logos
         
-        # Away team logo (left side) - 20x20 pixels starting at column 4, row 2
-        away_logo_x = 4
+        # Away team logo (left side) - 20x20 pixels starting at column 1, row 2
+        away_logo_x = 1
         away_logo_y = 2
         self.logo_manager.draw_logo(self.renderer, scoreboard.away_team, away_logo_x, away_logo_y, 20, 20)
         
-        # Home team logo (right side) - 20x20 pixels, same relative position
-        home_logo_x = self.cols - 24  # 20 for logo + 4 margin (mirrors left side)
+        # Home team logo (right side) - 20x20 pixels, closer to edge
+        home_logo_x = self.cols - 21  # 20 for logo + 1 margin (closer to edge)
         home_logo_y = 2
         self.logo_manager.draw_logo(self.renderer, scoreboard.home_team, home_logo_x, home_logo_y, 20, 20)
         
@@ -98,11 +97,11 @@ class ScoreboardLayout:
         center_x = (self.cols - 12) // 2  # Center of 64-pixel display
         self._draw_period_and_time(scoreboard, center_x, 10)
         
-        # Away score below logo
+        # Away score below logo (centered under 20px logo)
         away_score_x = away_logo_x + 8  # Center score under 20px logo
         self.renderer.draw_text(away_score_x, 24, str(scoreboard.away_score), *scoreboard.away_color)
         
-        # Home score below logo
+        # Home score below logo (centered under 20px logo) 
         home_score_x = home_logo_x + 8  # Center score under 20px logo
         self.renderer.draw_text(home_score_x, 24, str(scoreboard.home_score), *scoreboard.home_color)
     
